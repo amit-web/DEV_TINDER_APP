@@ -15,7 +15,7 @@ try{
   res.send("user added successfully");
 }
 catch(err){
-  console.log("User data not added"+err.message)
+  res.status(404).send("Couldn't create user"+""+err.message)
 }     
 })
 -// get all the users from the database
@@ -86,20 +86,33 @@ catch(err){
 //   }
 // })
 
+//Patch req.
 
-// app.patch("/user",async(req,res)=>{ 
+// app.patch("/user/:userId",async(req,res)=>{ 
 //   try{
-//     const userId = req.body.userId;
-//     let userdata = req.body 
-//     const beforeUserUpdate = await User.findByIdAndUpdate(userId,userdata,{returnDocument:'after'})
-//     console.log(beforeUserUpdate);
+//     //const userId = req.body.userId;
+//     let userdata = req.body;
+//     let userId = req.params.userId
+
+//     //Api level data validation , we want to update the data which we have in below array;
+//     let usercanUpdate = ["userId","firstName","password","age","gender","skills","about"];
+
+//     let willUpdateValidation = Object.keys(userdata).every((k)=>{
+//          return  usercanUpdate.includes(k);
+//     })
+//     if(!willUpdateValidation){
+//       throw new Error("Can't update this data!!")
+//     }
+//     const beforeUserUpdate = await User.findByIdAndUpdate(userId,userdata,{runValidators:true},{returnDocument:'after'})
+//     //console.log(beforeUserUpdate);
 //     res.send("User updated sucessfully")
 //   }catch(err){
-//      res.status(400).send("Something Went wrong!!!");
+//      res.status(400).send("Something Went wrong!!!"+""+err.message);
 //   }
 
 // })
 
+//Find one and Update:---->
 
 // app.patch("/user",async(req,res)=>{
 
@@ -118,20 +131,17 @@ catch(err){
 
 //Get user by email :--->
 
-app.get("/user",async(req,res)=>{
-  try{
-    const email = req.body.emailId;
-    const userdata = await User.findOne({emailId:email})
-    console.log(userdata);
-      res.send("successfully Got the Data")
-  }
-  catch(err){
-      res.status(400).send("Something Went wrong!!!");
-  }
-})
-
-
-
+// app.get("/user",async(req,res)=>{
+//   try{
+//     const email = req.body.emailId;
+//     const userdata = await User.findOne({emailId:email})
+//     console.log(userdata);
+//       res.send("successfully Got the Data")
+//   }
+//   catch(err){
+//       res.status(400).send("Something Went wrong!!!");
+//   }
+// })
 
 
 connectDB().then(()=>{

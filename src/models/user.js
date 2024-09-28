@@ -32,7 +32,7 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: true,
       minlength: 6,
-      maxlength: 12,
+      maxlength: 500,
       trim: true,
       validate:function(value){
         if(!validator.isStrongPassword(value)){
@@ -53,12 +53,7 @@ const userSchema = new mongoose.Schema(
       },
     },
     skills: {
-      type: [String],
-      validate:function(value){
-        if(!(value.length>= 6 && value.length<=10)){
-           throw new Error("can't Add more than 10 skills, min=6")
-        }
-      }
+      type: [String]
     },
     photoUrl: {
       type: String,

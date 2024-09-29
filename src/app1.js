@@ -66,7 +66,7 @@ app.get("/ab*cd",(req,res)=>{
 // }
 // );
 
-/ get all the users from the database
+// get all the users from the database
   //Feed Api ---> GET /feed
   // app.get("/feed",async(req,res)=>{
   //    // logic to fetch the users from the database and send it back to the client

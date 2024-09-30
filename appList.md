@@ -24,4 +24,4 @@
 
 
 
-Status : ignore,intrested, accpted, rejected
+Status : ignored,intrested, accpted, rejected

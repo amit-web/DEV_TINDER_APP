@@ -34,9 +34,7 @@ profileRouter.get("/profile/view", userAuth, async (req, res) => {
        }
      const loggedInUser = req.user; 
      const userDataNeedToUpdate = req.body;  
-     //console.log(userDataNeedToUpdate)
-     //console.log(loggedInUser)
-     
+          
     Object.keys(userDataNeedToUpdate).forEach((key)=>{
       return loggedInUser[key] = userDataNeedToUpdate[key]
     })
@@ -74,9 +72,7 @@ profileRouter.get("/profile/view", userAuth, async (req, res) => {
      else if(!validator.isStrongPassword(newpassword)){
       throw new Error("Use strong password!!");
      }
-     console.log(user);
      user.password = await bcrypt.hash(newpassword,10);
-     console.log(user.password)
      await user.save();
      res.json({
       message:`${user.firstName} your password updated successfully`,

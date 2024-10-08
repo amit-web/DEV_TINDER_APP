@@ -10,11 +10,11 @@ const safeData = [
   "age",
   "skills",
   "about",
+  "photoUrl"
 ];
 const User = require("../models/user");
 
 userRouter.get("/user/requests/received", userAuth, async (req, res) => {
-  console.log("amit");
   try {
     //trying to fetch all the intrested connection request  of the particular user;
 

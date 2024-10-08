@@ -81,7 +81,7 @@ requestRouter.post(
       const { status, requestId } = req.params;
 
       const allowedStatus = ["accepted", "rejected"];
-      console.log(status);
+      console.log(status,requestId,"loggedInuserId:",loggedInUserId.toString());
       if (!allowedStatus.includes(status)) {
         return res.status(400).send("Status not correct!!");
       }

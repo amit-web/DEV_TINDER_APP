@@ -1,8 +1,9 @@
 const express = require("express");
 const requestRouter = express.Router();
 const { userAuth } = require("../middlewares/auth");
-const user = require("../models/user");
-const connectionReq = require("../models/connectionRequest");
+const User = require("../models/user"); // Changed 'user' to 'User' to avoid shadowing
+const ConnectionRequest = require("../models/connectionRequest"); // Changed 'connectionReq' to 'ConnectionRequest'
+
 requestRouter.post("/sendConnectionRequest", userAuth, async (req, res) => {
   try {
     console.log("sending connction to the user");
@@ -24,16 +25,24 @@ requestRouter.post(
       console.log(fromUserId);
       const toUserId = req.params.toUserId;
       const status = req.params.status;
+
+      // Logic: User can't send request to itself
+      if (fromUserId.toString() === toUserId.toString()) {
+        return res.status(400).send("You cannot send a connection request to yourself!");
+      }
+
       let allowedStatus = ["ignored", "intrested"];
       if (!allowedStatus.includes(status)) {
         return res.status(400).send("Invalid request");
       }
-      //User is in your db or not?
-      const findUserInDB = await user.findById(toUserId);
+
+      //User is in your db or not? (Using 'User' model now)
+      const findUserInDB = await User.findById(toUserId);
       if (!findUserInDB) {
         return res.status(400).send("USer not Found!!!");
       }
-      const existingConnectionRequest = await connectionReq.findOne({
+
+      const existingConnectionRequest = await ConnectionRequest.findOne({
         $or: [
           { fromUserId, toUserId },
           { fromUserId: toUserId, toUserId: fromUserId },
@@ -46,7 +55,7 @@ requestRouter.post(
           .send({ message: "Connection Request Already exist" });
       }
 
-      const connectionRequest = new connectionReq({
+      const connectionRequest = new ConnectionRequest({
         fromUserId,
         toUserId,
         status,
@@ -81,11 +90,12 @@ requestRouter.post(
       const { status, requestId } = req.params;
 
       const allowedStatus = ["accepted", "rejected"];
-      console.log(status,requestId,"loggedInuserId:",loggedInUserId.toString());
+      console.log(status, requestId, "loggedInuserId:", loggedInUserId.toString());
       if (!allowedStatus.includes(status)) {
         return res.status(400).send("Status not correct!!");
       }
-      const connectionRequest = await connectionReq.findOne({
+
+      const connectionRequest = await ConnectionRequest.findOne({
         _id: requestId,
         toUserId: loggedInUserId,
         status: "intrested",
@@ -96,15 +106,19 @@ requestRouter.post(
           .status(400)
           .json({ message: "Connection Request not found!!" });
       }
+
       //logged in user can't send request to itself
+      // (Bhai yahan aapka review logic chal raha hai)
 
       connectionRequest.status = status;
       const data = await connectionRequest.save();
 
-      res.json({ mesaage: `connection request ${status}`, data });
+      // Fixed typo: mesaage -> message
+      res.json({ message: `connection request ${status}`, data });
     } catch (err) {
       res.status(400).send("Error:" + err.message);
     }
   }
 );
+
 module.exports = requestRouter;

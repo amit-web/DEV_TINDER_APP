@@ -7,7 +7,7 @@ const safeData = [
   "lastName",
   "age",
   "gender",
-  "age",
+  "age", // Kept duplicate as per your original code
   "skills",
   "about",
   "photoUrl"
@@ -16,9 +16,9 @@ const User = require("../models/user");
 
 userRouter.get("/user/requests/received", userAuth, async (req, res) => {
   try {
-    //trying to fetch all the intrested connection request  of the particular user;
+    //trying to fetch all the intrested connection request of the particular user;
 
-    loggedInUser = req.user;
+    const loggedInUser = req.user; // Added const here
     connectionRequest;
     //filtering the data from database
 
@@ -43,7 +43,7 @@ userRouter.get("/user/requests/received", userAuth, async (req, res) => {
 
 userRouter.get("/user/connections", userAuth, async (req, res) => {
   try {
-    loggedInUser = req.user;
+    const loggedInUser = req.user; // Added const here
     const connectionReq = await connectionRequest
       .find({
         status: "accepted",
@@ -51,10 +51,11 @@ userRouter.get("/user/connections", userAuth, async (req, res) => {
       })
       .populate("fromUserId", safeData)
       .populate("toUserId", safeData);
+    
     console.log(connectionReq);
     const data = connectionReq.map((row) => {
       if (row.fromUserId._id.toString() === loggedInUser._id.toString()) {
-        return row.totoUserId;
+        return row.toUserId; // Fixed your 'totoUserId' typo here
       }
       return row.fromUserId;
     });
@@ -67,12 +68,12 @@ userRouter.get("/user/connections", userAuth, async (req, res) => {
 
 userRouter.get("/user/feed", userAuth, async (req, res) => {
   try {
-    loggedInUser = req.user;
+    const loggedInUser = req.user; // Added const here
 
-    const page = parseInt(req.query.page) ||1
-    let limit = parseInt(req.query.limit)||10
-        limit>50?50:limit
-    const skip = (page-1)*limit;
+    const page = parseInt(req.query.page) || 1;
+    let limit = parseInt(req.query.limit) || 10;
+    limit = limit > 50 ? 50 : limit; // Fixed assignment here
+    const skip = (page - 1) * limit;
 
     //Here we are checking if logged user sent connection (intrested) or recieve any request so he will be present with both the Id;
 
@@ -99,7 +100,7 @@ userRouter.get("/user/feed", userAuth, async (req, res) => {
       ],
     }).select(safeData).skip(skip).limit(limit);
 
-    res.json({data:user});
+    res.json({ data: user });
   } catch (err) {
     res.status(400).send("Error:" + " " + err.message);
   }

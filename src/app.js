@@ -3,6 +3,7 @@ const { connectDB } = require("./config/database.js");
 const app = express();
 const cookieParser = require("cookie-parser");
 const cors = require('cors');
+require("dotenv").config();
 app.use(cors({
   origin:"http://localhost:5173",
   credentials:true
@@ -29,10 +30,12 @@ app.use("/",userRouter);
 connectDB()
   .then(() => {
     console.log("Database connected successfully!!!");
-    app.listen(7777, () => {
-      console.log("Server is successfully listenig on port 7777");
+
+    app.listen(process.env.PORT, () => {
+      console.log("Server is successfully listening on port 7777");
     });
   })
   .catch((err) => {
-    console.log("Database is not connected");
+    console.error("Database connection failed");
+    console.error(err.message);
   });
